@@ -22,17 +22,25 @@ export class User {
 
     @Field()
     name: string;
+   
     @Field()
     email: string;
+   
     @Field()
     password: string;
+   
     @Field(() => Avatars, { nullable: true })
     avatar?: Avatars | null;
 
     @Field()
     role: string;
+
+    @Field({ nullable: true })
+    address: string;
+
     @Field()
     createdAt: Date;
+    
     @Field()
     updatedAt: Date;
 }
