@@ -29,5 +29,10 @@ export class User {
     @Field(() => Avatars, { nullable: true })
     avatar?: Avatars | null;
 
-    
+    @Field()
+    role: string;
+    @Field()
+    createdAt: Date;
+    @Field()
+    updatedAt: Date;
 }

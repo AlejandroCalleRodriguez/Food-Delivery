@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { LoginDto, RegisterDto } from './dto/user.dto';
+import { Response } from 'express';
 
 @Injectable()
 export class UsersService {
@@ -12,14 +13,27 @@ export class UsersService {
   private readonly configService: ConfigService,
  ) {}
 
- async register(registerDto: RegisterDto){
-  const {name,email,password} = registerDto;
-  const user = {
-    name,
-    email,
-    password
-  };
-  return user;
+ async register(registerDto: RegisterDto, response: Response){
+  const { name, email, password } = registerDto;
+  const isEmailExist = await this.prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
+
+  if(isEmailExist){
+    throw new BadRequestException("Email ya existe");
+  }
+
+  const user = await this.prisma.user.create({
+    data: {
+      name,
+      email,
+      password,
+    },
+  });
+
+  return {user, response};
  }
 
  async Login(loginDto: LoginDto) {
@@ -34,6 +48,4 @@ export class UsersService {
  async getUsers(){
   return this.prisma.user.findMany({});
  }
-
-
 }
